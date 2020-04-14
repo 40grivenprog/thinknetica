@@ -17,7 +17,7 @@ end
 
 if desc == 0
   puts "Один корень:#{(-b) / (2 * a)}"
-elsif desc.zero?
+elsif desc.negative?
   puts 'Нет решения'
 else
   find_solution(a, b, c, desc)
