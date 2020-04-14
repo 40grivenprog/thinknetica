@@ -14,12 +14,12 @@ def check_right(sides)
 end
 
 def check_valid(sides)
-  false if sides.select(&:negative?).empty?
+  true if sides.select {|side| side <= 0}.empty?
 end
 
 check_valid(sides)
 if !check_valid(sides)
-  puts 'Невалидная сторона'
+  puts 'Неверное условие'
   return
 elsif sides.uniq.length == 1
   puts 'Равносторонний'
@@ -27,4 +27,6 @@ elsif sides.uniq.length == 2
   puts 'Равнобедренный'
 elsif check_right(sides)
   puts 'Прямоугольный'
+else
+	puts 'Не является прямоугольным, равносторонним или равнобедренным'
 end
