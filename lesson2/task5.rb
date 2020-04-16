@@ -20,11 +20,7 @@ puts "Day"
 day = gets.chomp.to_i
 def calculate(year, day, month, months_days)
 	months_days[2] = 30 if year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)
-	sum = 0
-	(1...month).each do |month|
-		sum += months_days[month]
-	end
-	sum + day
+	months_days.values.take(month - 1).sum + day
 end
 
 puts calculate(year, day, month, months_days)
