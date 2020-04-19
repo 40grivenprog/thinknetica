@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'pry'
 # This class characterizes Route according to requirements
 class Train
   attr_reader :carriage_num, :number, :speed, :type
@@ -38,10 +38,7 @@ class Train
   end
 
   def go_next
-    if @current_station_num == @route.stations.length
-      return 'This is final station'
-    end
-
+    return 'This is final station' if check_station('next')
     @speed = 30 if @speed == 0
     @route.stations[@current_station_num - 1].leave_train(self)
     @current_station_num += 1
@@ -49,11 +46,36 @@ class Train
   end
 
   def go_back
-    return 'This is first station' if @current_station_num == 1
-
+    return 'This is first station' if check_station('back')
     @speed = 30 if @speed == 0
     @route.stations[@current_station_num - 1].leave_train(self)
     @current_station_num -= 1
     @route.stations[@current_station_num - 1].take_train(self)
   end
+
+  def next_station
+  	return 'No next station' if check_station('next')
+  	@route.stations[@current_station_num].name
+  end
+
+  def previous_station
+  	return 'No previous stations' if check_station('back')
+  	@route.stations[@current_station_num - 2].name
+  end
+
+  def current_station
+  	@route.stations[@current_station_num - 1].name
+  end
+
+  private
+  def check_station(param)
+  	if @current_station_num == @route.stations.length && param == 'next'
+  		true
+  	elsif @current_station_num == 1 && param == 'back'
+  		true
+  	else
+  		false
+  	end
+  end
+
 end
