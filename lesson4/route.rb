@@ -20,7 +20,9 @@ class Route
   end
 
   def remove_between_station(station)
-    return puts "Вы не можете удалить конечные станции маршрута" if [@from, @to].include? station
+    if [@from, @to].include? station
+      return puts 'Вы не можете удалить конечные станции маршрута'
+    end
     return puts 'Нет такой станции' if @stations.delete(station).nil?
   end
 end

@@ -20,15 +20,11 @@ class Train
   end
 
   def add_carriage(carriage)
-    if @speed.zero?
-      @carriages << carriage
-    end
+    @carriages << carriage if @speed.zero?
   end
 
   def remove_carriage(carriage)
-      if @speed.zero?
-      @carriages.delete carriage
-    end
+    @carriages.delete carriage if @speed.zero?
   end
 
   def take_route(route)
@@ -42,7 +38,9 @@ class Train
 
   def go_next
     @speed = 30 if @speed == 0
-    return puts 'Это последняя станция' if current_station == @route.stations.last
+    if current_station == @route.stations.last
+      return puts 'Это последняя станция'
+    end
 
     next_station = find_station 'next'
     current_station.leave_train(self)
@@ -59,13 +57,17 @@ class Train
   end
 
   def next_station
-    return puts 'Нет следующей станции' if current_station == @route.stations.last
+    if current_station == @route.stations.last
+      return puts 'Нет следующей станции'
+    end
 
     find_station('next').name
   end
 
   def previous_station
-    return puts 'Нет предыдущей станции' if current_station == @route.stations.first
+    if current_station == @route.stations.first
+      return puts 'Нет предыдущей станции'
+    end
 
     find_station('back').name
   end
