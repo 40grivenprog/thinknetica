@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'pry'
 # This class characterizes Route according to requirements
 class Train
@@ -37,12 +38,13 @@ class Train
   end
 
   def current_station
-  	@route.stations.find {|station| station.trains.include? self}
+    @route.stations.find { |station| station.trains.include? self }
   end
 
   def go_next
     @speed = 30 if @speed == 0
-    return "This is last station" if current_station == @route.stations.last
+    return 'This is last station' if current_station == @route.stations.last
+
     next_station = find_station 'next'
     current_station.leave_train(self)
     next_station.take_train(self)
@@ -50,6 +52,7 @@ class Train
 
   def go_back
     return 'This is first station' if current_station == @route.stations.first
+
     @speed = 30 if @speed == 0
     previous_station = find_station 'previous'
     current_station.leave_train(self)
@@ -57,27 +60,30 @@ class Train
   end
 
   def next_station
-  	return 'No next station' if current_station == @route.stations.last
-  	find_station('next').name
+    return 'No next station' if current_station == @route.stations.last
+
+    find_station('next').name
   end
 
   def previous_station
-  	return 'No previous stations' if current_station == @route.stations.first
-  	find_station('back').name
+    return 'No previous stations' if current_station == @route.stations.first
+
+    find_station('back').name
   end
 
   def current_station_name
-  	current_station.name
+    current_station.name
   end
 
-	private
-	def find_station(param)
-		if param == 'next'
-			station_num = @route.stations.index(current_station)
-			@route.stations[station_num + 1]
-		else
-			station_num = @route.stations.index(current_station)
-			@route.stations[station_num - 1]
-		end
-	end
+  private
+
+  def find_station(param)
+    if param == 'next'
+      station_num = @route.stations.index(current_station)
+      @route.stations[station_num + 1]
+    else
+      station_num = @route.stations.index(current_station)
+      @route.stations[station_num - 1]
+    end
+  end
 end
