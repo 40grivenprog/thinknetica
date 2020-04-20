@@ -34,48 +34,50 @@ class Train
   def take_route(route)
     @route = route
     @route.stations.first.take_train(self)
-    @current_station_num = 1
-  end
-
-  def go_next
-    return 'This is final station' if check_station('next')
-    @speed = 30 if @speed == 0
-    @route.stations[@current_station_num - 1].leave_train(self)
-    @current_station_num += 1
-    @route.stations[@current_station_num - 1].take_train(self)
-  end
-
-  def go_back
-    return 'This is first station' if check_station('back')
-    @speed = 30 if @speed == 0
-    @route.stations[@current_station_num - 1].leave_train(self)
-    @current_station_num -= 1
-    @route.stations[@current_station_num - 1].take_train(self)
-  end
-
-  def next_station
-  	return 'No next station' if check_station('next')
-  	@route.stations[@current_station_num].name
-  end
-
-  def previous_station
-  	return 'No previous stations' if check_station('back')
-  	@route.stations[@current_station_num - 2].name
   end
 
   def current_station
-  	@route.stations[@current_station_num - 1].name
+  	@route.stations.find {|station| station.trains.include? self}
   end
 
-  private
-  def check_station(param)
-  	if @current_station_num == @route.stations.length && param == 'next'
-  		true
-  	elsif @current_station_num == 1 && param == 'back'
-  		true
-  	else
-  		false
-  	end
+  def go_next
+    @speed = 30 if @speed == 0
+    return "This is last station" if current_station == @route.stations.last
+    next_station = find_station 'next'
+    current_station.leave_train(self)
+    next_station.take_train(self)
   end
 
+  def go_back
+    return 'This is first station' if current_station == @route.stations.first
+    @speed = 30 if @speed == 0
+    previous_station = find_station 'previous'
+    current_station.leave_train(self)
+    previous_station.take_train(self)
+  end
+
+  def next_station
+  	return 'No next station' if current_station == @route.stations.last
+  	find_station('next').name
+  end
+
+  def previous_station
+  	return 'No previous stations' if current_station == @route.stations.first
+  	find_station('back').name
+  end
+
+  def current_station_name
+  	current_station.name
+  end
+
+	private
+	def find_station(param)
+		if param == 'next'
+			station_num = @route.stations.index(current_station)
+			@route.stations[station_num + 1]
+		else
+			station_num = @route.stations.index(current_station)
+			@route.stations[station_num - 1]
+		end
+	end
 end

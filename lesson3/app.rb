@@ -13,5 +13,4 @@ train = Train.new(1, 3)
 train2 = Train.new(0, 3)
 train.take_route(moscow_minsk)
 train.go_next
-train.go_back
 moscow.trains_list_by_type
