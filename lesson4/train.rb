@@ -20,7 +20,7 @@ class Train
   end
 
   def add_carriage(carriage)
-    @carriages << carriage if @speed.zero?
+    @carriages << carriage if @speed.zero? && carriage.type == @type
   end
 
   def remove_carriage(carriage)
