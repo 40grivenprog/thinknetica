@@ -1,22 +1,24 @@
-module InstenceCounter
+# frozen_string_literal: true
 
-	 def self.included(base)
+module InstenceCounter
+  def self.included(base)
     base.extend ClassMethods
     base.send :include, InstanceMethods
-  end
+ end
 
   module ClassMethods
-  	attr_reader :instances_counter
-  	def counter
-  		@instances_counter ||= 0
-  		@instances_counter += 1
-  	end
+    attr_reader :instances_counter
+    def counter
+      @instances_counter ||= 0
+      @instances_counter += 1
+    end
   end
 
   module InstanceMethods
-  	private
-  	def register_instance
-  		self.class.counter
-  	end
+    private
+
+    def register_instance
+      self.class.counter
+    end
   end
 end

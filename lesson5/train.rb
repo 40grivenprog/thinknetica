@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 
@@ -9,7 +10,6 @@ class Train
   attr_accessor :speed
   include Manufacturer
   include InstenceCounter
-
 
   @@trains = []
 
@@ -22,7 +22,7 @@ class Train
   end
 
   def self.find(number)
-    @@trains.select {|train| train.number == number }
+    @@trains.select { |train| train.number == number }
   end
 
   def increase_speed(speed_to_increase)

@@ -3,7 +3,7 @@
 # This class characterizes Route according to requirements
 class Route
   attr_reader :stations
-    include InstenceCounter
+  include InstenceCounter
 
   def initialize(from, to)
     @from = from
