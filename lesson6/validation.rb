@@ -2,7 +2,7 @@
 
 require 'pry'
 module Validation
-  NAME_FORMAT = /^[a-zA-z]{3,}$/.freeze
+  NAME_FORMAT = /^[а-яА-я]{3,}$/.freeze
   NUMBER_FORMAT = /^\w{3}-\w{2}\z|^\w{5}\z/.freeze
   def valid_name?(name)
     unless name.match NAME_FORMAT
@@ -16,7 +16,11 @@ module Validation
   end
 
   def valid_choice?(variants, choice)
-    raise 'Нет такого варианта ответа.' unless variants.include? choice
+  if variants.include? choice
+   true
+ else
+    raise 'Нет такого варианта ответа.'
+  end
   rescue StandardError => e
     puts e.message
   end

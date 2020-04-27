@@ -27,7 +27,7 @@ class Visual
     loop do
       main_menu
       choice = gets.chomp.to_i
-      valid_choice?((0..9), choice)
+      return unless valid_choice?((0..9), choice)
       case choice
       when 1
         create_station
@@ -84,7 +84,7 @@ class Visual
   def create_station
     warning_table('Создать станцию')
     choice = gets.chomp.to_i
-    valid_choice?((0..1), choice)
+    return unless valid_choice?((0..1), choice)
     if choice == 1
       attemp = 1
       loop do
@@ -106,7 +106,7 @@ class Visual
   def create_train
     warning_table('Создать поезд')
     choice = gets.chomp.to_i
-    valid_choice?((0..1), choice)
+    return unless valid_choice?((0..1), choice)
     if choice == 1
       attemp = 1
       loop do
@@ -115,7 +115,7 @@ class Visual
         if valid_number? number
           puts 'Выберите тип поезд: 1 - Пассажирский, 2 - Грузовой'
           type = gets.chomp.to_i
-          valid_choice?((1..2), type)
+          return unless valid_choice?((1..2), type)
 
           @trains << (type == 1 ? PassengerTrain.new(number) : CargoTrain.new(number))
           puts "Новый поезд создан: #{@trains.last.number}"
@@ -136,7 +136,7 @@ end
 
     warning_table('Создать маршрут')
     choice = gets.chomp.to_i
-    valid_choice?((0..1), choice)
+    return unless valid_choice?((0..1), choice)
     if choice == 1
       puts 'Выберите первую станцию:'
       first_station = select_from(@stations)
@@ -158,7 +158,7 @@ end
 
     warning_table('Задать маршрут')
     choice = gets.chomp.to_i
-    valid_choice?((0..1), choice)
+    return unless valid_choice?((0..1), choice)
     if choice == 1
       puts 'Выберите поезд:'
       train = select_from(@trains)
@@ -193,7 +193,6 @@ end
     train = select_from(@trains)
     train.stop unless train.speed.zero?
     if param == 'add'
-      binding.pry
       train.type == 'cargo' ? train.add_carriage(CarriageCargo.new) : train.add_carriage(CarriagePassenger.new)
     else
       train.remove_carriage(train.carriages.last)
