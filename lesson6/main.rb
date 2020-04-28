@@ -203,7 +203,7 @@ end
     choice = gets.chomp.to_i
     if choice == 1
       trains = @trains.reject { |train| train.route.nil? }
-      return if trains
+      return unless trains
 
       current_train = select_from(trains)
       puts '1 - Вперёд'
