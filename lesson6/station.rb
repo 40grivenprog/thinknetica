@@ -9,6 +9,7 @@ class Station
   include InstenceCounter
   include Validation
   def initialize(name)
+    validation!('Station', name)
     @name = name
     @trains = []
     @@stations << self
@@ -34,6 +35,20 @@ class Station
       end
     end
     "Cargo: #{cargo.length}. Passenger: #{passenger.length}"
+  end
+
+  def add_name
+    loop do
+      puts 'Введите название станции:'
+      name = gets.chomp
+      if valid_name? name
+        break
+      elsif attemp >= 3
+        break
+      end
+      puts "У вас осталось #{3 - attemp} попыток"
+      attemp += 1
+      end
   end
 
   def take_train(train)

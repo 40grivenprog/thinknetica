@@ -5,14 +5,7 @@ module Validation
   NAME_FORMAT = /^[а-яА-я]{3,}$/.freeze
   NUMBER_FORMAT = /^\w{3}-\w{2}\z|^\w{5}\z/.freeze
   def valid_name?(name)
-    unless name.match NAME_FORMAT
-      raise 'Имя должно быть текстовыми содержать более трёх символов. Попробуйте ещё раз. '
- end
-
-    true
-  rescue StandardError => e
-    puts e.message
-    false
+    raise 'Имя должно быть текстовыми содержать более трёх символов. Попробуйте ещё раз. ' unless name.match NAME_FORMAT
   end
 
   def valid_choice?(variants, choice)
@@ -25,14 +18,15 @@ module Validation
     puts e.message
   end
 
-  def valid_number?(number)
-    unless number.match? NUMBER_FORMAT
-      raise 'Номер не соответсвует формату из требований'
- end
+  def validation!(classname, param)
+    if classname == "Station"
+      valid_name? param
+    elsif classname == 'Train'
+      valid_number? param
+    end
+  end
 
-    true
-  rescue StandardError => e
-    puts e.message
-    false
+  def valid_number?(number)
+    raise 'Номер не соответсвует формату из требований' unless number.match? NUMBER_FORMAT
   end
 end

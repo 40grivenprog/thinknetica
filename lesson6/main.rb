@@ -81,52 +81,49 @@ class Visual
     puts table
   end
 
-  def create_station
+  def create_station(attemp = 1)
     warning_table('Создать станцию')
     choice = gets.chomp.to_i
     return unless valid_choice?((0..1), choice)
     if choice == 1
-      attemp = 1
-      loop do
-        puts 'Введите название станции:'
-        name = gets.chomp
-        if valid_name? name
-          @stations << Station.new(name)
-          puts "Создана новая станция: #{@stations.last.name}"
-          break
-        elsif attemp >= 3
-          break
-        end
+      puts "Введите имя станции"
+      name = gets.chomp
+      @stations << Station.new(name)
+      puts "Создана новая станция: #{@stations.last.name}"
+    end
+    rescue StandardError => e
+      if attemp < 3
+        puts e.message
         puts "У вас осталось #{3 - attemp} попыток"
         attemp += 1
+        retry
+      else
+        raise e.message
       end
-    end
   end
 
-  def create_train
+  def create_train(attemp = 1)
     warning_table('Создать поезд')
     choice = gets.chomp.to_i
     return unless valid_choice?((0..1), choice)
     if choice == 1
-      attemp = 1
-      loop do
-        puts 'Введите номер поезда'
-        number = gets.chomp
-        if valid_number? number
-          puts 'Выберите тип поезд: 1 - Пассажирский, 2 - Грузовой'
-          type = gets.chomp.to_i
-          return unless valid_choice?((1..2), type)
-
-          @trains << (type == 1 ? PassengerTrain.new(number) : CargoTrain.new(number))
-          puts "Новый поезд создан: #{@trains.last.number}"
-          break
-        elsif attemp >= 3
-          brake
-        end
+      puts 'Выберите тип поезд: 1 - Пассажирский, 2 - Грузовой'
+      type = gets.chomp.to_i
+      valid_choice?((1..2), type)
+      puts "Введите номер поезда:"
+      number = gets.chomp
+      @trains << (type == 1 ? PassengerTrain.new(number) : CargoTrain.new(number))
+      puts "Новый поезд создан: #{@trains.last.number}"
+      end
+    rescue StandardError => e
+      if attemp < 3
+        puts e.message
         puts "У вас осталось #{3 - attemp} попыток"
         attemp += 1
+        retry
+      else
+        raise e.message
       end
-    end
     end
 
   def create_route
@@ -260,6 +257,5 @@ end
     end
   end
 end
-
 # a = Visual.new
 # a.start

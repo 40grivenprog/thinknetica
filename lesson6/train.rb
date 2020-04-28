@@ -2,7 +2,7 @@
 
 require_relative 'manufacturer'
 require_relative 'instance_counter'
-
+require_relative 'validation'
 require 'pry'
 # This class characterizes Route according to requirements
 class Train
@@ -10,10 +10,11 @@ class Train
   attr_accessor :speed
   include Manufacturer
   include InstenceCounter
-
+  include Validation
   @@trains = []
 
   def initialize(number)
+    validation!('Train', number)
     @number = number
     @carriages = []
     @speed = 0
