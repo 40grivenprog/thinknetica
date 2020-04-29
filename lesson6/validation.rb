@@ -4,7 +4,7 @@ require 'pry'
 module Validation
   NAME_FORMAT = /^[а-яА-я]{3,}$/.freeze
   NUMBER_FORMAT = /^\w{3}-\w{2}\z|^\w{5}\z/.freeze
-  def valid_name?(name)
+  def validate_name!(name)
     raise 'Имя должно быть текстовыми содержать более трёх символов. Попробуйте ещё раз. ' unless name.match NAME_FORMAT
   end
 
@@ -18,15 +18,7 @@ module Validation
     puts e.message
   end
 
-  def validation!(classname, param)
-    if classname == "Station"
-      valid_name? param
-    elsif classname == 'Train'
-      valid_number? param
-    end
-  end
-
-  def valid_number?(number)
+  def validate_number!(number)
     raise 'Номер не соответсвует формату из требований' unless number.match? NUMBER_FORMAT
   end
 end

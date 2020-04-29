@@ -9,7 +9,7 @@ class Station
   include InstenceCounter
   include Validation
   def initialize(name)
-    validation!('Station', name)
+    validate_name! name
     @name = name
     @trains = []
     @@stations << self
