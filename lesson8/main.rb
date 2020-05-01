@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Этот файл является примером того, как работает программа
 require_relative 'train'
 require_relative 'station'
 require_relative 'route'
@@ -102,14 +101,12 @@ class Visual
       puts "Создана новая станция: #{@stations.last.name}"
     end
   rescue NameError => e
-    if attemp < 3
-      puts e.message
-      puts "У вас осталось #{3 - attemp} попыток"
-      attemp += 1
-      retry
-    else
-      raise e.message
-    end
+    raise e.message unless attemp < 3
+
+    puts e.message
+    puts "У вас осталось #{3 - attemp} попыток"
+    attemp += 1
+    retry
   end
 
   def create_train(attemp = 1)
@@ -123,17 +120,15 @@ class Visual
       number = gets.chomp
       @trains << (type == 1 ? PassengerTrain.new(number) : CargoTrain.new(number))
       puts "Новый поезд создан: #{@trains.last.number}"
-      end
+    end
   rescue NumberError => e
-    if attemp < 3
-      puts e.message
-      puts "У вас осталось #{3 - attemp} попыток"
-      attemp += 1
-      retry
-    else
-      raise e.message
-    end
-    end
+    raise e.message unless attemp < 3
+
+    puts e.message
+    puts "У вас осталось #{3 - attemp} попыток"
+    attemp += 1
+    retry
+  end
 
   def create_route
     return puts 'Что бы создать маршрут необходимо создать две станции' if @stations.length < 2
@@ -141,16 +136,16 @@ class Visual
     warning_table('Создать маршрут')
     choice = gets.chomp.to_i
     valid_choice?((0..1), choice)
-    if choice == 1
-      puts 'Выберите первую станцию:'
-      first_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
-      puts 'Выберите вторую станцию:'
-      second_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
-      return puts 'Нельзя выбирать две одинаковые станции' if first_station == second_station
+    return unless choice == 1
 
-      @routes << Route.new(first_station, second_station)
-      puts "Создан новый маршрут: #{@routes.last.stations.map(&:name).join(' -> ')}"
-    end
+    puts 'Выберите первую станцию:'
+    first_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
+    puts 'Выберите вторую станцию:'
+    second_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
+    return puts 'Нельзя выбирать две одинаковые станции' if first_station == second_station
+
+    @routes << Route.new(first_station, second_station)
+    puts "Создан новый маршрут: #{@routes.last.stations.map(&:name).join(' -> ')}"
   end
 
   def route_for_train
@@ -159,14 +154,14 @@ class Visual
     warning_table('Задать маршрут')
     choice = gets.chomp.to_i
     valid_choice?((0..1), choice)
-    if choice == 1
-      puts 'Выберите поезд:'
-      train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
-      puts 'Выберите маршрут:'
-      route = select_from(@routes) { |route| puts "#{@routes.index(route) + 1} - #{route.stations.map(&:name).join('->')}" }
-      "Поезд номер #{train.number} будет следовать по маршруту #{route.stations.map(&:name).join('->')}"
-      train.take_route(route)
-    end
+    return unless choice == 1
+
+    puts 'Выберите поезд:'
+    current_train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
+    puts 'Выберите маршрут:'
+    current_route = select_from(@routes) { |route| puts "#{@routes.index(route) + 1} - #{route.stations.map(&:name).join('->')}" }
+    current_train.take_route(current_route)
+    "Поезд номер #{current_train.number} будет следовать по маршруту #{current_route.stations.map(&:name).join('->')}"
   end
 
   def select_from(list)
@@ -187,12 +182,12 @@ class Visual
   end
 
   def carriages_method(param)
-    train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
-    train.stop unless train.speed.zero?
+    current_train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
+    current_train.stop unless current_train.speed.zero?
     if param == 'add'
-      plus_carriage(train)
+      plus_carriage(current_train)
     else
-      train.remove_carriage(train.carriages.last)
+      current_train.remove_carriage(current_train.carriages.last)
     end
   end
 
@@ -201,36 +196,35 @@ class Visual
       puts 'Введите объём:'
       volume = gets.chomp.to_i
       @carriages << CarriageCargo.new(volume)
-      train.add_carriage(@carriages.last)
     else
       puts 'Введите количество пассажирских мест.'
       number = gets.chomp.to_i
       @carriages << CarriagePassenger.new(number)
-      train.add_carriage(@carriages.last)
     end
+    train.add_carriage(@carriages.last)
   end
 
   def move_train
-    return puts 'Ни одного поезда на маршруте' unless has_route?
+    return puts 'Ни одного поезда на маршруте' unless route?
 
     warning_table('Управлять поездом на маршруте')
     choice = gets.chomp.to_i
     valid_choice?((0..1), choice)
-    if choice == 1
-      trains = @trains.reject { |train| train.route.nil? }
-      return unless trains
+    return unless choice == 1
 
-      current_train = select_from(trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
-      puts '1 - Вперёд'
-      puts '2 - Назад'
-      choice = gets.chomp.to_i
-      valid_choice?((1..2), choice)
-      current_train.go_next if choice == 1
-      current_train.go_back if choice == 2
-    end
+    trains = @trains.reject { |train| train.route.nil? }
+    return unless trains
+
+    current_train = select_from(trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
+    puts '1 - Вперёд'
+    puts '2 - Назад'
+    choice = gets.chomp.to_i
+    valid_choice?((1..2), choice)
+    current_train.go_next if choice == 1
+    current_train.go_back if choice == 2
   end
 
-  def has_route?
+  def route?
     @trains.reject { |train| train.route.nil? }
   end
 
@@ -240,23 +234,23 @@ class Visual
     warning_table('Управлять маршрутом')
     choice = gets.chomp.to_i
     valid_choice?((0..1), choice)
-    if choice == 1
-      puts 'Выберите маршрут'
-      current_route = select_from(@routes) { |route| puts "#{@routes.index(route) + 1} - #{route.stations.map(&:name).join('->')}" }
-      puts '1 - Добавить новую станцию'
-      puts '2 - Удалить станцию'
-      valid_choice?((1..2), choice)
-      update_route(current_route, 'add') if gets.chomp.to_i == 1
-      update_route(current_route, 'remove') if gets.chomp.to_i == 2
-    end
+    return unless choice == 1
+
+    puts 'Выберите маршрут'
+    current_route = select_from(@routes) { |route| puts "#{@routes.index(route) + 1} - #{route.stations.map(&:name).join('->')}" }
+    puts '1 - Добавить новую станцию'
+    puts '2 - Удалить станцию'
+    valid_choice?((1..2), choice)
+    update_route(current_route, 'add') if gets.chomp.to_i == 1
+    update_route(current_route, 'remove') if gets.chomp.to_i == 2
   end
 
   def update_route(route, param)
-    station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
+    current_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
     if param == 'add'
-      route.add_between_station(station)
+      route.add_between_station(current_station)
     else
-      route.remove_between_station(station)
+      route.remove_between_station(current_station)
     end
   end
 
@@ -267,18 +261,18 @@ class Visual
     choice = gets.chomp.to_i
     valid_choice?((0..2), choice)
     if choice == 1
-      station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
-      return 'Нет поездов на станиции' if station.trains.empty?
+      current_station = select_from(@stations) { |station| puts "#{@stations.index(station) + 1} - #{station.name}" }
+      return 'Нет поездов на станиции' if current_station.trains.empty?
 
-      station.each_train do |train|
+      current_station.each_train do |train|
         puts "Номер поезда #{train.number}. Количество вагонов #{train.carriages.length}"
       end
     elsif choice == 2
-      train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
-      return 'У данного поезда нет вагонов' if train.carriages.empty?
+      current_train = select_from(@trains) { |train| puts "#{@trains.index(train) + 1} - #{train.number}" }
+      return 'У данного поезда нет вагонов' if current_train.carriages.empty?
 
-      train.each_carriage do |carriage|
-        puts "#{train.carriages.index(carriage) + 1} вагон - Свободно: #{carriage.free_param_quantity}. Занято: #{carriage.not_free_by_param}."
+      current_train.each_carriage do |carriage|
+        puts "#{current_train.carriages.index(carriage) + 1} вагон - Свободно: #{carriage.free_param_quantity}. Занято: #{carriage.not_free_by_param}."
       end
     end
   end
@@ -313,11 +307,11 @@ class Visual
 
   def get_carriage(trains)
     puts 'Выберите поезд'
-    train = select_from(trains) { |train| puts "#{trains.index(train) + 1} - #{train.number}" }
-    raise 'У данного поезда нет вагонов' if train.carriages.empty?
+    current_train = select_from(trains) { |train| puts "#{trains.index(train) + 1} - #{train.number}" }
+    raise 'У данного поезда нет вагонов' if current_train.carriages.empty?
 
-    select_from(train.carriages) do |carriage|
-      puts "#{train.carriages.index(carriage) + 1} - Свободно: #{carriage.free_param_quantity}. Занятно: #{carriage.not_free_by_param}"
+    select_from(current_train.carriages) do |carriage|
+      puts "#{current_train.carriages.index(carriage) + 1} - Свободно: #{carriage.free_param_quantity}. Занятно: #{carriage.not_free_by_param}"
     end
   end
 end

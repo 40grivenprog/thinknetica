@@ -15,11 +15,7 @@ module Validation
   end
 
   def valid_choice?(variants, choice)
-    if variants.include? choice
-      true
-    else
-      raise ChoiceError, 'Нет такого варианта ответа.'
-    end
+    raise ChoiceError, 'Нет такого варианта ответа.' unless variants.include? choice
   end
 
   def validate_number!(number)

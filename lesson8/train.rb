@@ -58,7 +58,7 @@ class Train
   end
 
   def go_next
-    @speed = 30 if @speed == 0
+    @speed = 30 if @speed.zero?
     return puts 'Это последняя станция' if current_station == @route.stations.last
 
     next_station = find_station 'next'
@@ -69,7 +69,7 @@ class Train
   def go_back
     return puts 'Это первая станция' if current_station == @route.stations.first
 
-    @speed = 30 if @speed == 0
+    @speed = 30 if @speed.zero?
     previous_station = find_station 'previous'
     current_station.leave_train(self)
     previous_station.take_train(self)
@@ -94,11 +94,10 @@ class Train
   private
 
   def find_station(param)
+    station_num = @route.stations.index(current_station)
     if param == 'next'
-      station_num = @route.stations.index(current_station)
       @route.stations[station_num + 1]
     else
-      station_num = @route.stations.index(current_station)
       @route.stations[station_num - 1]
     end
   end
