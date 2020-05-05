@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Validation
-  NAME_FORMAT = /^[а-яА-я]$/.freeze
+  NAME_FORMAT = /^[а-яА-я]*$/.freeze
   NUMBER_FORMAT = /^\w{3}-\w{2}\z|^\w{5}\z/.freeze
 
   class ChoiceError < StandardError
@@ -31,27 +31,26 @@ module Validation
 
     def validate!
       self.class.validates.each do |validation|
-        validate_presence(validation) if validation[:type] == :presence
-        validate_type(validation) if validation[:type] == :type
-        validate_format(validation) if validation[:type] == :format
+        attribute, type, format = validation[:attribute], validation[:type], validation[:format]
+        send type, attribute, format
       end
     end
 
-    def validate_presence(validation)
-      attr = send validation[:attribute]
+    def presence(attribute, format)
+      attr = send attribute
       raise CustomError, 'Параметр не может быть пустым.' if attr == ''
     end
 
-    def validate_type(validation)
-      attr = send validation[:attribute]
-      unless attr.is_a? validation[:format]
+    def param_type(attribute, format)
+      attr = send attribute
+      unless attr.is_a? format
         raise CustomError, 'Данное поле должно быть строкой.'
       end
     end
 
-    def validate_format(validation)
-      attr = send validation[:attribute]
-      unless attr.match validation[:format]
+    def format(attribute, format)
+      attr = send attribute
+      unless attr.match format
         raise CustomError, 'Данное поле не соответствует нужному формату.'
       end
     end

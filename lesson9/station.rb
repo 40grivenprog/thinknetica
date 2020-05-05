@@ -9,7 +9,7 @@ class Station
   include InstenceCounter
   include Validation
   validate(:name, :presence, true)
-  validate(:name, :type, String)
+  validate(:name, :param_type, String)
   validate(:name, :format, NAME_FORMAT)
   def initialize(name)
     @name = name
